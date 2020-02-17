@@ -27,7 +27,7 @@ This is the offical Node SDK for Analysys.
 
 7 设置落日志功能，将把数据落到本地 通过初始化代码的配置参数logCollector 设置落日志的文档目录和日志格式
     
-8 通过以上步骤您即可验证SDK是否已经集成成功。更多接口说明请您查看 API 文档。
+通过以上步骤您即可验证SDK是否已经集成成功。更多接口说明请您查看 API 文档。
 
 更多Api使用方法参考：https://docs.analysys.cn/ark/integration/sdk/node-sdk
 
