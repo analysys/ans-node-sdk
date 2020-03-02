@@ -1,6 +1,6 @@
 {
-    "name": "test-ans-node-sdk",
-    "version": "5.0.1",
+    "name": "ans-node-sdk",
+    "version": "4.0.4",
     "description": "This is the offical Node SDK for Analysys.",
     "main": "sdk/AnalysysAgent_NodeJS_SDK.cjs.js",
     "directories": {
