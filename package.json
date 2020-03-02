@@ -1,8 +1,8 @@
 {
-    "name": "nodejs-sdk",
-    "version": "1.0.0",
-    "description": "nodejs-sdk",
-    "main": "test.js",
+    "name": "test-ans-node-sdk",
+    "version": "1.0.2",
+    "description": "This is the offical Node SDK for Analysys.",
+    "main": "sdk/AnalysysAgent_NodeJS_SDK.cjs.js",
     "directories": {
         "lib": "lib"
     },
@@ -11,7 +11,7 @@
         "cover": "jest --coverage",
         "watch": "rollup -c rollup.config.js --watch"
     },
-    "author": "",
+    "author": "wangmingjia@analysys.com.cn",
     "license": "ISC",
     "dependencies": {
         "@babel/node": "^7.5.5",
@@ -34,5 +34,23 @@
         "rollup-plugin-postcss": "^2.0.3",
         "rollup-plugin-replace": "^2.2.0",
         "rollup-plugin-uglify": "^6.0.3"
+    },
+    "bugs": {
+        "url": "https://github.com/analysys/ans-node-sdk/issues"
+    },
+    "homepage": "https://github.com/analysys/ans-node-sdk#readme",
+    "keywords": [
+        "ans",
+        "analytics",
+        "sdk",
+        "tracking",
+        "node"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/analysys/ans-node-sdk.git"
+    },
+    "engines": {
+        "node": ">=6.0"
     }
 }
