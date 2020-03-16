@@ -192,7 +192,7 @@ class Util {
             if (this.mkdirs(path.dirname(filepath))) {
                 try {   // 增加try 是因为防止多进程 两个进程都检测不到文件夹，都进行创建，第二个不应该创建了
                     fs.mkdirSync(filepath);
-                } catch{
+                } catch (e) {
 
                 }
                 return true;

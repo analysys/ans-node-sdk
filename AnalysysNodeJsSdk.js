@@ -22,7 +22,7 @@ class AnalysysAgent {
         }
         this.baseProperties = {
             '$lib': 'Node',
-            '$lib_version': '4.0.3',
+            '$lib_version': '4.0.4',
             '$debug': debugMode
         };
         this.superProperty = {};
@@ -428,7 +428,7 @@ class AnalysysAgent {
         if (Util.paramType(this.logCollector) == 'Null' || Util.paramType(this.logCollector) != 'Object') {
             var flag = check.checkBase(this.appId, this.uploadURL);
             if (!flag) return;
-        } 
+        }
         var postData = this.postData;
         if (this.checkBack && Util.paramType(this.checkBack) == 'Function') {
             var newBack = this.checkBack;
