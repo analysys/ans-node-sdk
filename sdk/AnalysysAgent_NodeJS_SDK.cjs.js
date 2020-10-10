@@ -2,10 +2,10 @@
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var request = _interopDefault(require('request'));
+var request = _interopDefault(require('sync-request'));
 var fs = _interopDefault(require('fs'));
 var path = _interopDefault(require('path'));
-var zlib = _interopDefault(require('zlib'));
+require('zlib');
 
 var baseConfig = {
     "base": {
@@ -766,6 +766,11 @@ let keywords = (val) => {
 
 var check = new Check();
 
+// import request from 'request';            //请求的公共模块
+
+
+
+
 class AnalysysAgent {
     constructor({ appId, uploadURL, debugMode = 0, postNumber = 0, postTime = 0, logCollector = null }) {
         baseConfig.base.$debug = debugMode;
@@ -778,7 +783,7 @@ class AnalysysAgent {
         }
         this.baseProperties = {
             '$lib': 'Node',
-            '$lib_version': '4.0.4',
+            '$lib_version': '4.0.5',
             '$debug': debugMode
         };
         this.superProperty = {};
@@ -820,7 +825,7 @@ class AnalysysAgent {
         baseConfig.status.successCode = 20002;
         this.code = 200;
         successLog();
-        return this.superProperty;
+        return true;
         // }
     }
     /**
@@ -837,10 +842,10 @@ class AnalysysAgent {
             baseConfig.status.successCode = 20002;
             this.code = 200;
             successLog();
-            return this.superProperty;
+            return true;
         }
         errorLog();
-        return;
+        return false;
     }
     /**
      * 获取超级属性
@@ -894,11 +899,11 @@ class AnalysysAgent {
             baseConfig.status.successCode = '20003';
             this.code = 200;
             successLog();
-            return this.superProperty;
+            return true;
         }
         baseConfig.status.successCode = '20011';
         successLog();
-        return;
+        return false;
     }
 
     /**
@@ -911,7 +916,7 @@ class AnalysysAgent {
         this.code = 200;
         successLog();
         this.superProperty = {};
-        return this.superProperty;
+        return true;
     }
 
     /**
@@ -919,20 +924,23 @@ class AnalysysAgent {
      */
     flush () {
         if (this.postData.length > 0) {
-            this.send();
+            return this.send();
         }
+        return false;
     }
 
     /**
      * 立即终止发送的请求
      */
-    shutdown () {
-        if (this.postFun) {
-            this.postFun.abort();
-            baseConfig.status.successCode = '20013';
-            successLog();
-        }
-    }
+    // shutdown () {
+    //     if (this.postFun) {
+    //         this.postFun.abort();
+    //         baseConfig.status.successCode = '20013';
+    //         successLog();
+    //         return true;
+    //     }
+    //     return false
+    // }
     /**
      * 设置用户的属性
      * @param distinctId 用户ID
@@ -943,14 +951,14 @@ class AnalysysAgent {
         this.resetCode();
         baseConfig.status.FnName = '$profile_set';
         if (!check.checkUploadTime(upLoadTime)) {
-            return;
+            return false;
         }
         // properties = check.checkProperty(properties);
         if (check.checkDistinctId(distinctId) && check.checkBoolean(isLogin) && check.checkProperty(properties)) {
-            this.upLoad(distinctId, isLogin, '$profile_set', properties, platform, upLoadTime);
-            return;
+            return this.upLoad(distinctId, isLogin, '$profile_set', properties, platform, upLoadTime);
         }
         errorLog();
+        return false;
     }
     /**
      * 首次设置用户的属性,该属性只在首次设置时有效
@@ -962,14 +970,14 @@ class AnalysysAgent {
         this.resetCode();
         baseConfig.status.FnName = '$profile_set_once';
         if (!check.checkUploadTime(upLoadTime)) {
-            return;
+            return false;
         }
         // properties = check.checkProperty(properties);
         if (check.checkDistinctId(distinctId) && check.checkBoolean(isLogin) && check.checkProperty(properties)) {
-            this.upLoad(distinctId, isLogin, '$profile_set_once', properties, platform, upLoadTime);
-            return;
+            return this.upLoad(distinctId, isLogin, '$profile_set_once', properties, platform, upLoadTime);
         }
         errorLog();
+        return false;
     }
     /**
      * 为用户的一个或多个数值类型的属性累加一个数值
@@ -981,7 +989,7 @@ class AnalysysAgent {
         this.resetCode();
         baseConfig.status.FnName = '$profile_increment';
         if (!check.checkUploadTime(upLoadTime)) {
-            return;
+            return false;
         }
         if (check.checkDistinctId(distinctId) && check.checkBoolean(isLogin) && Util$1.paramType(properties) === 'Object') {
             if (Object.keys(properties).length > 0) {
@@ -997,8 +1005,7 @@ class AnalysysAgent {
                 baseConfig.status.key = 'properties';
                 errorLog();
             }
-            this.upLoad(distinctId, isLogin, '$profile_increment', properties, platform, upLoadTime);
-            return;
+            return this.upLoad(distinctId, isLogin, '$profile_increment', properties, platform, upLoadTime);
         }
         if (!Util$1.paramType(properties) !== 'Object') {
             baseConfig.status.key = properties;
@@ -1006,6 +1013,7 @@ class AnalysysAgent {
             baseConfig.status.errorCode = '600016';
         }
         errorLog();
+        return false;
     }
     /**
      * 追加用户列表类型的属性
@@ -1017,14 +1025,14 @@ class AnalysysAgent {
         this.resetCode();
         baseConfig.status.FnName = '$profile_append';
         if (!check.checkUploadTime(upLoadTime)) {
-            return;
+            return false;
         }
         // properties = check.checkProperty(properties);
         if (check.checkDistinctId(distinctId) && check.checkBoolean(isLogin) && check.checkProperty(properties)) {
-            this.upLoad(distinctId, isLogin, '$profile_append', properties, platform, upLoadTime);
-            return;
+            return this.upLoad(distinctId, isLogin, '$profile_append', properties, platform, upLoadTime);
         }
         errorLog();
+        return false;
     }
     /**
      * 删除用户某一个属性
@@ -1037,16 +1045,16 @@ class AnalysysAgent {
         this.resetCode();
         baseConfig.status.FnName = '$profile_unset';
         if (!check.checkUploadTime(upLoadTime)) {
-            return;
+            return false;
         }
         check.checkUnsetKey(property);
         if (check.checkDistinctId(distinctId) && check.checkBoolean(isLogin)) {
             var properties = {};
             properties[property] = '';
-            this.upLoad(distinctId, isLogin, '$profile_unset', properties, platform, upLoadTime);
-            return;
+            return this.upLoad(distinctId, isLogin, '$profile_unset', properties, platform, upLoadTime);
         }
         errorLog();
+        return false;
     }
     /**
      * 删除用户所有属性
@@ -1058,13 +1066,13 @@ class AnalysysAgent {
         this.resetCode();
         baseConfig.status.FnName = '$profile_delete';
         if (!check.checkUploadTime(upLoadTime)) {
-            return;
+            return false;
         }
         if (check.checkDistinctId(distinctId) && check.checkBoolean(isLogin)) {
-            this.upLoad(distinctId, isLogin, '$profile_delete', {}, platform, upLoadTime);
-            return;
+            return this.upLoad(distinctId, isLogin, '$profile_delete', {}, platform, upLoadTime);
         }
         errorLog();
+        return false;
     }
     /**
      * 关联用户匿名ID和登录ID
@@ -1077,15 +1085,15 @@ class AnalysysAgent {
         this.resetCode();
         baseConfig.status.FnName = '$alias';
         if (!check.checkUploadTime(upLoadTime)) {
-            return;
+            return false;
         }
         if (check.checkAliasId(aliasId) && check.checkDistinctId(distinctId)) {
             var param = {};
             param.$original_id = distinctId;
-            this.upLoad(aliasId, true, '$alias', param, platform, upLoadTime);
-            return;
+            return this.upLoad(aliasId, true, '$alias', param, platform, upLoadTime);
         }
         errorLog();
+        return false;
     }
     /**
      * 追踪用户多个属性的事件
@@ -1100,7 +1108,7 @@ class AnalysysAgent {
         baseConfig.status.FnName = eventName;
         // baseConfig.status.FnName = eventName || "$track";
         if (!check.checkUploadTime(upLoadTime)) {
-            return;
+            return false;
         }
         upLoadTime = upLoadTime || +new Date();
         check.checkEventName(eventName);
@@ -1108,17 +1116,16 @@ class AnalysysAgent {
         if (properties == undefined) {
             properties = {};
             if (check.checkDistinctId(distinctId) && check.checkBoolean(isLogin)) {
-                this.upLoad(distinctId, isLogin, eventName, properties, platform, upLoadTime, true);
-                return;
+                return this.upLoad(distinctId, isLogin, eventName, properties, platform, upLoadTime, true);
             }
         } else {
             // properties = check.checkProperty(properties);
             if (check.checkDistinctId(distinctId) && check.checkBoolean(isLogin) && check.checkProperty(properties)) {
-                this.upLoad(distinctId, isLogin, eventName, properties, platform, upLoadTime, true);
-                return;
+                return this.upLoad(distinctId, isLogin, eventName, properties, platform, upLoadTime, true);
             }
         }
         errorLog();
+        return false;
     }
     /**
      * 上传数据,首先校验相关KEY和VALUE,符合规则才可以上传
@@ -1132,12 +1139,12 @@ class AnalysysAgent {
         var eventMap = {};
         eventMap.appid = this.appId;
         eventMap.xwho = distinctId;
-        eventMap.xwhen = upLoadTime || +new Date();
+        eventMap.xwhen = +upLoadTime || +new Date();
         eventMap.xwhat = eventName;
         // 平台校验放在upload 里面公共
         if (platform == undefined) {
             check.checkPlatform(platform);
-            return;
+            return false;
         }
         platform = check.checkPlatform(platform);
         this.baseProperties.$is_login = isLogin;
@@ -1151,23 +1158,22 @@ class AnalysysAgent {
         this.postData.push(eventMap);
         //数据上传 满足 一定的条数上传( 数据可设置 )，立即上传;
         if (this.postData.length >= this.postNumber) {
-            this.send();
-            return false;
+            return this.send();
         }
         //没有设置上传条数，上传间隔时间，立即上传。
         if (!this.postNumber && !this.upPostDataTime) {
-            this.send();
+            return this.send();
         }
         //设置了上传间隔时间（可以为0。设置0 或者 不设置 默认为 0）, 上传条数大于 0 的情况下，会进入到时间条件的上传，到达时间就上传。
         if (this.upPostDataTime >= 0 && this.postData.length > 0) {
             var _this = this;
             if (this.timer) {
-                return false;
+                return true;
             } else {
                 this.timer = setTimeout(function () {
                     _this.send();
                 }, this.upPostDataTime);
-                return false;
+                return true;
             }
         }
     }
@@ -1179,25 +1185,21 @@ class AnalysysAgent {
         var _this = this;
         this.resetCode();
         // 对appid 进行校验
-        if (!check.checkAppid(this.appId)) return;
+        if (!check.checkAppid(this.appId)) return false;
         // 没有 落文件 是 会对上报数据进项校验的。有落文件 就忽略这一步
         if (Util$1.paramType(this.logCollector) == 'Null' || Util$1.paramType(this.logCollector) != 'Object') {
             var flag = check.checkBase(this.appId, this.uploadURL);
-            if (!flag) return;
+            if (!flag) return false;
         }
         var postData = this.postData;
-        if (this.checkBack && Util$1.paramType(this.checkBack) == 'Function') {
-            var newBack = this.checkBack;
-        }
         // 来到这里 说明满足条件 写入文件
         if (Util$1.paramType(this.logCollector) == 'Object') {
             var logC = this.logCollector;
-            logC.LogCol(_this.postData, function (err) {
+            return logC.LogCol(_this.postData, function (err) {
                 if (!err) {
                     _this.postData = [];
                 }
             }, this.baseProperties.$debug);
-            return;
         }
         baseConfig.status.key = this.uploadURL;
         baseConfig.status.value = JSON.stringify(postData);
@@ -1207,52 +1209,40 @@ class AnalysysAgent {
         this.postData = [];   //此时清空缓存 ，下次进入到 send的 是一个 可发送的新数据。
         clearTimeout(this.timer);
         this.timer = null;
-        this.postFun = request({
-            url: this.uploadURL,
-            method: 'POST',
+        let resRequest = request("POST", this.uploadURL, {
             json: true,
-            body: postData
-        }, (error, response, body) => {
-            if (!error && response.statusCode == 200) {
-                //返回结果可能是 json 也可能是 压缩 之后转 64。所以判断，非json，64转一下之后 zip 解压缩。
-                if (Util$1.paramType(body) === 'Object') {
-                    //成功 打印成功日志 清空定时器 失败 打印失败日志 数据存储下来，下次上报
-                    if (body.code == 200) {
-                        baseConfig.status.successCode = '20001';
-                        this.code = 200;
-                        successLog();
-                    } else {
-                        baseConfig.status.errorCode = '60008';
-                        errorLog();
-                    }
-                    if (this.checkBack && Util$1.paramType(this.checkBack) == 'Function') {
-                        newBack();
-                    }
-                } else {
-                    //先 base64 解密 之后 gzip 解压。
-                    var buffer = Buffer.from(body, 'base64');
-                    zlib.unzip(buffer, (err, buffer) => {
-                        if (!err) {
-                            var result = JSON.parse(buffer.toString());
-                            if (result.code == 200) {
-                                baseConfig.status.successCode = '20001';
-                                this.code = 200;
-                                successLog();
-                            } else {
-                                baseConfig.status.errorCode = '60008';
-                                errorLog();
-                            }
-                        }
-                        if (this.checkBack && Util$1.paramType(this.checkBack) == 'Function') {
-                            newBack();
-                        }
-                    });
+            json: postData
+        });
+        if (resRequest.statusCode == 200) {
+            if (Util$1.paramType(resRequest.body) === 'Object') {
+                //成功 打印成功日志 清空定时器 失败 打印失败日志 数据存储下来，下次上报
+                if (body.code == 200) {
+                    baseConfig.status.successCode = '20001';
+                    this.code = 200;
+                    successLog();
+                    return true;
                 }
-            } else {
                 baseConfig.status.errorCode = '60008';
                 errorLog();
+                return false;
+            } else {
+                //先 base64 解密 之后 gzip 解压。
+                var buffer = resRequest.body.toString();
+                if (buffer == "H4sIAAAAAAAAAKtWSs5PSVWyMjIwqAUAVAOW6gwAAAA=" || "{\"code\":200}") {
+                    baseConfig.status.successCode = '20001';
+                    this.code = 200;
+                    successLog();
+                    return true;
+                }
+                baseConfig.status.errorCode = '60008';
+                errorLog();
+                return false;
             }
-        });
+        } else {
+            baseConfig.status.errorCode = '60008';
+            errorLog();
+            return false;
+        }
     }
 }
 

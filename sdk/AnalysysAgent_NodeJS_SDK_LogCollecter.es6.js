@@ -771,7 +771,7 @@ class LogCollector {
         var TimeStr = Util$1.timeObj();
         var GerFolder = this.gerFolder;
         baseConfig.base.$debug = debugMode;
-        if (!check.checkGerFolder(this.gerFolder)) return;
+        if (!check.checkGerFolder(this.gerFolder)) return false;
         // 查找最后一位 gerFolder 是不是包含 “/”,没有的话加上。
         if (Util$1.paramType(GerFolder) == 'String' && GerFolder.charAt(GerFolder.length - 1) != '/') {
             GerFolder = GerFolder + '/';
@@ -797,9 +797,9 @@ class LogCollector {
         baseConfig.status.value = dataString;
         baseConfig.status.successCode = '20014';
         successLog();
-
         baseConfig.status.successCode = '20015';
         successLog();
+        return true;
     }
 }
 

@@ -16,7 +16,7 @@ var analysys = new AnalysysAgent({
     platform: 'Node',      //平台名称
     debugMode: 2,          //调试模式
     postNumber: 0,         //上传条数设置（批量上传）
-    postTime: 0          //上传时间间隔（批量上传）
+    postTime: 0        //上传时间间隔（批量上传）
     // logCollector: new LogCollector({    // 是否落文件到本地,落文件到本地不再上报
     //     gerFolder: './a/b/c/',    // 落文件的目录
     //     gerRule: 'h'              // 落文件的格式
@@ -37,7 +37,8 @@ try {
     trackPropertie.producePrice = 80;		  //商品价格
     trackPropertie.shop = '网上书城';     //店铺名称
     // 事件追踪
-    analysys.track(distinctId, true, 'ViewProduct', trackPropertie, platform);
+    var viewStatus = analysys.track(distinctId, true, 'ViewProduct', trackPropertie, platform);
+    console.log("是否浏览商品", viewStatus)
     // 用户注册登录
     var registerId = 'ABCDEF123456789';
     analysys.alias(distinctId, registerId, platform);
@@ -45,7 +46,8 @@ try {
         sex: 'male',    //性别
         age: 23         //年龄
     };
-    analysys.registerSuperProperties(superPropertie);//用户信息
+    var registerProStatus = analysys.registerSuperProperties(superPropertie);//用户信息
+    console.log("是否注册用户属性", registerProStatus)
     var profiles = {
         $city: '北京',         //城市
         $province: '北京',     //省份
@@ -61,7 +63,8 @@ try {
     };
     analysys.profileSetOnce(registerId, true, profile_age, platform);//重新设置公共属性
 
-    analysys.clearSuperProperties();
+    var clearStatus = analysys.clearSuperProperties();
+    console.log("是否清除通用属性", clearStatus)
     superPropertie = {
         userLevel: 0,   //用户级别
         userPoint: 0    //用户积分
@@ -80,8 +83,8 @@ try {
 
     trackPropertie.orderId = 'ORDER_12345';
     trackPropertie.price = 80;
-    analysys.track(registerId, true, 'Order', trackPropertie, platform);//支付信息
-
+    var orderStatus = analysys.track(registerId, true, 'Order', trackPropertie, platform);//支付信息
+    console.log("是否下单成功", orderStatus)
     trackPropertie.orderId = 'ORDER_12345';
     trackPropertie.productName = 'Javascript权威指南';
     trackPropertie.productType = 'Js书籍';
@@ -90,7 +93,8 @@ try {
     trackPropertie.productNumber = 1;
     trackPropertie.price = 80;
     trackPropertie.paymentMethod = 'AliPay';
-    analysys.track(registerId, true, 'Payment', trackPropertie, platform);
+    var payStatus = analysys.track(registerId, true, 'Payment', trackPropertie, platform);
+    console.log("是否支付成功", payStatus);
 } catch (err) {
     analysys.flush();
 }
